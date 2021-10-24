@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTO Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.demo.repository.UserRepository">
+    
+    <resultMap id="findUser" type="com.example.demo.entity.User">
+        <id property="user_id" column="USER_ID" />
+        <result property="email" column="USER_EMAIL" />
+        <result property="username" column="USER_NAME" />
+        <result property="password" column="USER_PASSWORD" />
+        <collection property="roles" column="{roles_name=USER_ROLE}" javaType="List" ofType="string" select="findRoles" />
+    </resultMap>
+
+    <select id="findRoles"  resultType="string">
+        SELECT ROLES_NAME
+        FROM roles
+        WHERE
+              ROLES_NAME = #{roles_name}
+    </select>
+    
+    <!-- userNo로 User조회 -->
+    <select id="findByUserName" parameterType="hashmap" resultMap="findUser">
+        SELECT
+            *
+        FROM user
+        WHERE USER_NAME = #{username}
+    </select>
+
+
+    <select id="save" parameterType="hashmap">
+        INSERT INTO user
+            (
+                USER_NAME
+                ,USER_EMAIL
+                ,USER_PASSWORD
+                ,USER_ROLE
+            ) VALUES
+            (
+                #{username}
+                ,#{email}
+                ,#{password}
+                ,#{rolesDto}
+            )
+    </select>
+</mapper>
